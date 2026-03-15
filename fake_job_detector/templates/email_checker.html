@@ -1,0 +1,393 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4 mb-5">
+    <div class="text-center mb-5">
+        <h1 class="gradient-text mb-3">
+            <i class="fas fa-envelope-open-text"></i> Recruiter Email Checker
+        </h1>
+        <p class="text-muted">Analyze HR email addresses and detect suspicious patterns</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="email-checker-card">
+                <form method="POST" class="email-form">
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-envelope"></i> Recruiter Email Address
+                        </label>
+                        <input type="email" name="email" class="form-control" 
+                               placeholder="hr@company.com" required>
+                        <small class="form-text">Enter the email address of the recruiter who contacted you</small>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label">
+                            <i class="fas fa-globe"></i> Company Website (Optional)
+                        </label>
+                        <input type="url" name="company_website" class="form-control" 
+                               placeholder="https://www.company.com">
+                        <small class="form-text">We'll check if the email domain matches the company website</small>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Analyze Email
+                    </button>
+                </form>
+            </div>
+
+            {% if result %}
+            {% if result.valid %}
+            <div class="result-card mt-5">
+                <div class="result-header">
+                    <h3><i class="fas fa-clipboard-check"></i> Analysis Results</h3>
+                </div>
+
+                <div class="email-display">
+                    <i class="fas fa-envelope"></i>
+                    <span>{{ result.email }}</span>
+                </div>
+
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="info-box">
+                            <div class="info-label">Domain Type</div>
+                            <div class="info-value">{{ result.domain_type }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="info-box">
+                            <div class="info-label">Email Domain</div>
+                            <div class="info-value">{{ result.domain }}</div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="info-box">
+                            <div class="info-label">Risk Score</div>
+                            <div class="info-value">{{ result.risk_score }}/100</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="risk-indicator risk-{{ result.risk_color }}">
+                    <div class="risk-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        Risk Level: {{ result.risk_level }}
+                    </div>
+                    <div class="risk-bar">
+                        <div class="risk-fill" style="width: {{ result.risk_score }}%"></div>
+                    </div>
+                </div>
+
+                {% if result.risk_factors %}
+                <div class="risk-factors">
+                    <h5><i class="fas fa-exclamation-triangle"></i> Risk Factors Detected:</h5>
+                    <ul>
+                        {% for factor in result.risk_factors %}
+                        <li>{{ factor }}</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                {% else %}
+                <div class="safe-message">
+                    <i class="fas fa-check-circle"></i>
+                    <p>No major risk factors detected in this email address.</p>
+                </div>
+                {% endif %}
+
+                <div class="recommendation">
+                    <h5><i class="fas fa-lightbulb"></i> Recommendation:</h5>
+                    <p>{{ result.recommendation }}</p>
+                </div>
+
+                <div class="safety-tips">
+                    <h5><i class="fas fa-shield-alt"></i> Safety Tips:</h5>
+                    <ul>
+                        <li>Always verify recruiter identity through official company website or LinkedIn</li>
+                        <li>Legitimate companies use corporate email domains, not free services</li>
+                        <li>Never share sensitive personal information via email without verification</li>
+                        <li>Be cautious of emails asking for payment or registration fees</li>
+                        <li>Cross-check job postings on official company career pages</li>
+                    </ul>
+                </div>
+            </div>
+            {% else %}
+            <div class="alert alert-danger mt-4">
+                <i class="fas fa-times-circle"></i> {{ result.error }}
+            </div>
+            {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<style>
+.gradient-text {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.email-checker-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 10px 40px rgba(99, 102, 241, 0.2);
+}
+
+.email-form .form-label {
+    color: rgba(248, 250, 252, 0.9);
+    font-weight: 600;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.email-form .form-label i {
+    color: #6366f1;
+    margin-right: 8px;
+}
+
+.email-form .form-text {
+    color: rgba(248, 250, 252, 0.5);
+    font-size: 0.85rem;
+    margin-top: 5px;
+    display: block;
+}
+
+.result-card {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 20px;
+    padding: 40px;
+    animation: slideUp 0.6s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-header {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid rgba(99, 102, 241, 0.3);
+}
+
+.result-header h3 {
+    color: #6366f1;
+    font-weight: 700;
+    font-size: 1.8rem;
+}
+
+.email-display {
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    font-size: 1.2rem;
+    color: white;
+    margin-bottom: 30px;
+}
+
+.email-display i {
+    color: #6366f1;
+    margin-right: 10px;
+}
+
+.info-box {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.info-box:hover {
+    transform: translateY(-5px);
+    border-color: rgba(99, 102, 241, 0.5);
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
+}
+
+.info-label {
+    color: rgba(248, 250, 252, 0.6);
+    font-size: 0.85rem;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.info-value {
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 700;
+}
+
+.risk-indicator {
+    margin: 30px 0;
+    padding: 25px;
+    border-radius: 15px;
+    border: 2px solid;
+}
+
+.risk-indicator.risk-success {
+    background: rgba(16, 185, 129, 0.1);
+    border-color: #10b981;
+}
+
+.risk-indicator.risk-warning {
+    background: rgba(245, 158, 11, 0.1);
+    border-color: #f59e0b;
+}
+
+.risk-indicator.risk-danger {
+    background: rgba(239, 68, 68, 0.1);
+    border-color: #ef4444;
+}
+
+.risk-badge {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 15px;
+    text-align: center;
+}
+
+.risk-success .risk-badge {
+    color: #10b981;
+}
+
+.risk-warning .risk-badge {
+    color: #f59e0b;
+}
+
+.risk-danger .risk-badge {
+    color: #ef4444;
+}
+
+.risk-bar {
+    height: 30px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+    position: relative;
+}
+
+.risk-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #10b981, #f59e0b, #ef4444);
+    border-radius: 15px;
+    transition: width 1s ease;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding-right: 10px;
+    color: white;
+    font-weight: 700;
+}
+
+.risk-factors {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid #ef4444;
+    border-radius: 12px;
+    padding: 25px;
+    margin: 25px 0;
+}
+
+.risk-factors h5 {
+    color: #ef4444;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.risk-factors ul {
+    margin: 0;
+    padding-left: 25px;
+}
+
+.risk-factors li {
+    color: rgba(248, 250, 252, 0.9);
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.safe-message {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid #10b981;
+    border-radius: 12px;
+    padding: 25px;
+    text-align: center;
+    margin: 25px 0;
+}
+
+.safe-message i {
+    color: #10b981;
+    font-size: 3rem;
+    margin-bottom: 15px;
+}
+
+.safe-message p {
+    color: rgba(248, 250, 252, 0.9);
+    font-size: 1.1rem;
+    margin: 0;
+}
+
+.recommendation {
+    background: rgba(99, 102, 241, 0.1);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 12px;
+    padding: 25px;
+    margin: 25px 0;
+}
+
+.recommendation h5 {
+    color: #6366f1;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.recommendation p {
+    color: rgba(248, 250, 252, 0.9);
+    line-height: 1.6;
+    margin: 0;
+}
+
+.safety-tips {
+    background: rgba(139, 92, 246, 0.1);
+    border: 1px solid rgba(139, 92, 246, 0.3);
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 25px;
+}
+
+.safety-tips h5 {
+    color: #8b5cf6;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.safety-tips ul {
+    margin: 0;
+    padding-left: 25px;
+}
+
+.safety-tips li {
+    color: rgba(248, 250, 252, 0.9);
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+</style>
+{% endblock %}

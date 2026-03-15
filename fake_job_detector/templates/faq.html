@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="text-center mb-5">
+        <h1 style="font-size: 3rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">FAQ</h1>
+        <p class="lead">Frequently Asked Questions</p>
+    </div>
+
+    <div class="card p-4 mb-3">
+        <h5 style="color: var(--primary);">How accurate is the AI detection?</h5>
+        <p>Our ML model is trained on thousands of job postings with 85%+ accuracy. It combines rule-based detection with machine learning for comprehensive analysis.</p>
+    </div>
+
+    <div class="card p-4 mb-3">
+        <h5 style="color: var(--primary);">What is the risk score?</h5>
+        <p>Risk score ranges from 0-100. Low (0-35), Medium (35-65), High (65-100). It's calculated based on suspicious keywords, domain age, SSL, email verification, and ML prediction.</p>
+    </div>
+
+    <div class="card p-4 mb-3">
+        <h5 style="color: var(--primary);">Is my data safe?</h5>
+        <p>Yes! We don't store personal information. Only job descriptions and company names are saved for analysis history. No payment or sensitive data is collected.</p>
+    </div>
+
+    <div class="card p-4 mb-3">
+        <h5 style="color: var(--primary);">Can I report a fake company?</h5>
+        <p>Absolutely! Visit the Fake Companies page and use the complaint submission form. Your report helps protect others.</p>
+    </div>
+
+    <div class="card p-4 mb-3">
+        <h5 style="color: var(--primary);">How do I download reports?</h5>
+        <p>After analyzing a job, click "Download PDF Report" button. You can also export your entire scan history as CSV from the History page.</p>
+    </div>
+
+    <div class="card p-4 mb-3">
+        <h5 style="color: var(--primary);">What are red flags?</h5>
+        <p>Red flags are suspicious keywords like "urgent hiring", "registration fee", "guaranteed income", "gmail contact", etc. that commonly appear in fake job postings.</p>
+    </div>
+
+    <div class="card p-4 mb-3">
+        <h5 style="color: var(--primary);">Can I trust a low-risk job?</h5>
+        <p>Low risk means fewer red flags detected, but always verify through official company channels. Never pay fees for job applications.</p>
+    </div>
+</div>
+{% endblock %}

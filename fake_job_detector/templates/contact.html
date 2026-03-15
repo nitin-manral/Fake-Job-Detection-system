@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <div class="text-center mb-5">
+        <h1 style="font-size: 3rem; background: linear-gradient(135deg, var(--primary), var(--secondary)); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Contact Us</h1>
+        <p class="lead">Get in touch with our team</p>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6 mb-4">
+            <div class="card p-4">
+                <h3 style="color: var(--primary);" class="mb-4">Send Message</h3>
+                <form method="POST">
+                    <div class="mb-3">
+                        <label class="form-label">Name</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Subject</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Message</label>
+                        <textarea class="form-control" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Send Message</button>
+                </form>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card p-4 mb-4">
+                <h5 style="color: var(--primary);"><i class="fas fa-envelope"></i> Email</h5>
+                <p>support@fakejobdetector.com</p>
+            </div>
+            <div class="card p-4 mb-4">
+                <h5 style="color: var(--secondary);"><i class="fas fa-phone"></i> Phone</h5>
+                <p>+91 1800-XXX-XXXX</p>
+            </div>
+            <div class="card p-4">
+                <h5 style="color: var(--accent);"><i class="fas fa-map-marker-alt"></i> Address</h5>
+                <p>123 Tech Park, Cyber City<br>Bangalore, Karnataka 560001</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

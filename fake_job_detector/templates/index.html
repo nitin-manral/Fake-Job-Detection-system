@@ -1,0 +1,560 @@
+{% extends "base.html" %}
+
+{% block content %}
+<!-- 3D Animated Background -->
+<div id="network-background"></div>
+
+<!-- Hero Section -->
+<div class="hero-section-cyber">
+    <div class="container text-center">
+        <div class="cyber-grid"></div>
+        <h1 class="cyber-title" data-text="AI FAKE JOB OFFER DETECTOR">
+            <span class="glitch-text">AI FAKE JOB OFFER DETECTOR</span>
+        </h1>
+        <p class="cyber-subtitle">Detect fake job offers using AI-powered scam detection</p>
+        <a href="{{ url_for('analyze') }}" class="cyber-button">
+            <span class="button-content">
+                <i class="fas fa-shield-alt"></i> Analyze Job Now
+            </span>
+            <span class="button-glow"></span>
+        </a>
+    </div>
+</div>
+
+<!-- Dashboard Stats Cards -->
+<div class="container stats-container">
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="glass-card" data-tilt>
+                <div class="card-glow"></div>
+                <div class="card-icon">
+                    <i class="fas fa-chart-line"></i>
+                </div>
+                <h3 class="counter" data-target="{{ total_scans }}">0</h3>
+                <p class="card-label">Total Scans</p>
+                <div class="card-border"></div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="glass-card" data-tilt>
+                <div class="card-glow danger-glow"></div>
+                <div class="card-icon danger-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="counter" data-target="{{ fake_detected }}">0</h3>
+                <p class="card-label">Fake Detected</p>
+                <div class="card-border danger-border"></div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="glass-card" data-tilt>
+                <div class="card-glow success-glow"></div>
+                <div class="card-icon success-icon">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h3 class="counter" data-target="{{ genuine_jobs }}">0</h3>
+                <p class="card-label">Genuine Jobs</p>
+                <div class="card-border success-border"></div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="glass-card" data-tilt>
+                <div class="card-glow warning-glow"></div>
+                <div class="card-icon warning-icon">
+                    <i class="fas fa-flag"></i>
+                </div>
+                <h3 class="counter" data-target="{{ total_complaints }}">0</h3>
+                <p class="card-label">Complaints</p>
+                <div class="card-border warning-border"></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="container features-cyber">
+    <div class="row">
+        <div class="col-md-8">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card-cyber scroll-reveal">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-robot fa-3x"></i>
+                        </div>
+                        <h4>AI Detection</h4>
+                        <p>Machine learning model trained to identify fake job postings</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card-cyber scroll-reveal" style="animation-delay: 0.1s;">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-database fa-3x"></i>
+                        </div>
+                        <h4>Scam Database</h4>
+                        <p>Comprehensive database of known fake companies and scams</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card-cyber scroll-reveal" style="animation-delay: 0.2s;">
+                        <div class="feature-icon-wrapper">
+                            <i class="fas fa-file-pdf fa-3x"></i>
+                        </div>
+                        <h4>PDF Reports</h4>
+                        <p>Download detailed analysis reports for your records</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="activity-card scroll-reveal" style="animation-delay: 0.3s;">
+                <h5><i class="fas fa-clock"></i> Recent Activity</h5>
+                <div class="activity-list">
+                    {% for scan in recent_scans %}
+                    <div class="activity-item">
+                        <div class="activity-content">
+                            <strong>{{ scan.company_name }}</strong>
+                            <small>{{ scan.timestamp.strftime('%m/%d %H:%M') }}</small>
+                        </div>
+                        <span class="activity-badge badge-{{ 'danger' if scan.risk_category == 'High' else 'warning' if scan.risk_category == 'Medium' else 'success' }}">{{ scan.risk_score }}</span>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* 3D Network Background */
+#network-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+/* Cyber Hero Section */
+.hero-section-cyber {
+    min-height: 70vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    overflow: hidden;
+}
+
+.cyber-grid {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        linear-gradient(rgba(99, 102, 241, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(99, 102, 241, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
+}
+
+@keyframes gridMove {
+    0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
+    100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+}
+
+.cyber-title {
+    font-size: 4rem;
+    font-weight: 900;
+    margin-bottom: 1.5rem;
+    position: relative;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+}
+
+.glitch-text {
+    background: linear-gradient(135deg, #00f5ff, #6366f1, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: glitchText 3s infinite;
+    text-shadow: 
+        0 0 20px rgba(99, 102, 241, 0.5),
+        0 0 40px rgba(99, 102, 241, 0.3);
+}
+
+@keyframes glitchText {
+    0%, 100% { transform: translate(0); }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+}
+
+.cyber-subtitle {
+    font-size: 1.3rem;
+    color: rgba(255, 255, 255, 0.7);
+    margin-bottom: 2.5rem;
+    animation: fadeInUp 1s ease;
+}
+
+@keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(30px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Cyber Button */
+.cyber-button {
+    position: relative;
+    display: inline-block;
+    padding: 18px 50px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 1.1rem;
+    border-radius: 50px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 30px rgba(99, 102, 241, 0.5);
+}
+
+.button-content {
+    position: relative;
+    z-index: 2;
+}
+
+.button-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255,255,255,0.3), transparent 70%);
+    opacity: 0;
+    transition: all 0.5s ease;
+}
+
+.cyber-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 0 50px rgba(99, 102, 241, 0.8), 0 10px 30px rgba(0,0,0,0.3);
+    color: white;
+}
+
+.cyber-button:hover .button-glow {
+    opacity: 1;
+    animation: ripple 1s ease-out;
+}
+
+@keyframes ripple {
+    0% { transform: scale(0); opacity: 1; }
+    100% { transform: scale(1); opacity: 0; }
+}
+
+/* Glass Cards */
+.stats-container {
+    margin-top: -50px;
+    position: relative;
+    z-index: 10;
+}
+
+.glass-card {
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 20px;
+    padding: 35px 25px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+    cursor: pointer;
+}
+
+.glass-card:hover {
+    transform: translateY(-15px);
+    border-color: rgba(99, 102, 241, 0.8);
+}
+
+.card-glow {
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(99, 102, 241, 0.3), transparent 70%);
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.glass-card:hover .card-glow {
+    opacity: 1;
+    animation: rotate 4s linear infinite;
+}
+
+@keyframes rotate {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.danger-glow { background: radial-gradient(circle, rgba(239, 68, 68, 0.3), transparent 70%); }
+.success-glow { background: radial-gradient(circle, rgba(16, 185, 129, 0.3), transparent 70%); }
+.warning-glow { background: radial-gradient(circle, rgba(245, 158, 11, 0.3), transparent 70%); }
+
+.card-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 20px;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.4);
+    transition: all 0.4s ease;
+}
+
+.glass-card:hover .card-icon {
+    transform: rotateY(360deg) scale(1.1);
+}
+
+.danger-icon { background: linear-gradient(135deg, #ef4444, #dc2626); }
+.success-icon { background: linear-gradient(135deg, #10b981, #059669); }
+.warning-icon { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+.counter {
+    font-size: 3rem;
+    font-weight: 900;
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin: 15px 0;
+}
+
+.card-label {
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.card-border {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, #6366f1, #8b5cf6);
+    transform: scaleX(0);
+    transition: transform 0.4s ease;
+}
+
+.glass-card:hover .card-border {
+    transform: scaleX(1);
+}
+
+.danger-border { background: linear-gradient(90deg, #ef4444, #dc2626); }
+.success-border { background: linear-gradient(90deg, #10b981, #059669); }
+.warning-border { background: linear-gradient(90deg, #f59e0b, #d97706); }
+
+/* Feature Cards */
+.features-cyber {
+    margin-top: 80px;
+    margin-bottom: 80px;
+}
+
+.feature-card-cyber {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 20px;
+    padding: 35px 25px;
+    text-align: center;
+    transition: all 0.4s ease;
+    height: 100%;
+}
+
+.feature-card-cyber:hover {
+    transform: translateY(-10px);
+    border-color: rgba(99, 102, 241, 0.6);
+    box-shadow: 0 20px 50px rgba(99, 102, 241, 0.3);
+}
+
+.feature-icon-wrapper {
+    margin-bottom: 20px;
+}
+
+.feature-icon-wrapper i {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    transition: transform 0.3s ease;
+}
+
+.feature-card-cyber:hover .feature-icon-wrapper i {
+    transform: scale(1.2) rotateY(360deg);
+}
+
+.feature-card-cyber h4 {
+    color: white;
+    font-weight: 700;
+    margin-bottom: 15px;
+}
+
+.feature-card-cyber p {
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 0.95rem;
+}
+
+/* Activity Card */
+.activity-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(99, 102, 241, 0.2);
+    border-radius: 20px;
+    padding: 30px;
+    height: 100%;
+}
+
+.activity-card h5 {
+    color: #6366f1;
+    font-weight: 700;
+    margin-bottom: 25px;
+}
+
+.activity-list {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+}
+
+.activity-item:hover {
+    padding-left: 10px;
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.activity-content strong {
+    color: white;
+    display: block;
+    margin-bottom: 5px;
+}
+
+.activity-content small {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+.activity-badge {
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-weight: 700;
+    font-size: 0.85rem;
+}
+
+.badge-danger { background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; }
+.badge-warning { background: rgba(245, 158, 11, 0.2); color: #f59e0b; border: 1px solid #f59e0b; }
+.badge-success { background: rgba(16, 185, 129, 0.2); color: #10b981; border: 1px solid #10b981; }
+
+/* Scroll Reveal Animation */
+.scroll-reveal {
+    opacity: 0;
+    transform: translateY(50px);
+    animation: scrollReveal 0.8s ease forwards;
+}
+
+@keyframes scrollReveal {
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cyber-title { font-size: 2.5rem; }
+    .cyber-subtitle { font-size: 1rem; }
+    .counter { font-size: 2.5rem; }
+}
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+<script>
+// 3D Network Background
+VANTA.NET({
+    el: "#network-background",
+    mouseControls: true,
+    touchControls: true,
+    gyroControls: false,
+    minHeight: 200.00,
+    minWidth: 200.00,
+    scale: 1.00,
+    scaleMobile: 1.00,
+    color: 0x6366f1,
+    backgroundColor: 0x0f172a,
+    points: 8.00,
+    maxDistance: 25.00,
+    spacing: 18.00
+});
+
+// Counter Animation
+const counters = document.querySelectorAll('.counter');
+const speed = 200;
+
+const animateCounter = (counter) => {
+    const target = +counter.getAttribute('data-target');
+    const increment = target / speed;
+    
+    const updateCount = () => {
+        const count = +counter.innerText;
+        if (count < target) {
+            counter.innerText = Math.ceil(count + increment);
+            setTimeout(updateCount, 10);
+        } else {
+            counter.innerText = target;
+        }
+    };
+    updateCount();
+};
+
+// Intersection Observer for counters
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.5 });
+
+counters.forEach(counter => observer.observe(counter));
+
+// Tilt Effect
+const cards = document.querySelectorAll('[data-tilt]');
+cards.forEach(card => {
+    card.addEventListener('mousemove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        const y = e.clientY - rect.top;
+        
+        const centerX = rect.width / 2;
+        const centerY = rect.height / 2;
+        
+        const rotateX = (y - centerY) / 10;
+        const rotateY = (centerX - x) / 10;
+        
+        card.style.transform = `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(-15px)`;
+    });
+    
+    card.addEventListener('mouseleave', () => {
+        card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+    });
+});
+</script>
+{% endblock %}

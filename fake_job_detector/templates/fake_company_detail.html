@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5 mb-5">
+    <a href="{{ url_for('fake_companies') }}" class="btn btn-secondary mb-3"><i class="fas fa-arrow-left"></i> Back</a>
+    
+    <div class="card p-5">
+        <h2 style="color: var(--danger);">{{ company.name }}</h2>
+        <p><strong>Scam Type:</strong> <span class="badge" style="background: var(--danger); font-size: 1rem;">{{ company.scam_type }}</span></p>
+        <p><strong>Total Complaints:</strong> <span class="badge bg-danger" style="font-size: 1rem;">{{ company.complaint_count }}</span></p>
+        
+        <h4 class="mt-4" style="color: var(--primary);"><i class="fas fa-info-circle"></i> How the Scam Works</h4>
+        <p style="line-height: 1.8;">{{ company.how_scam_works }}</p>
+
+        <h4 class="mt-5" style="color: var(--secondary);"><i class="fas fa-star"></i> Community Ratings</h4>
+        {% if avg_rating %}
+        <p style="font-size: 1.5rem;">Average: <strong>{{ "%.1f"|format(avg_rating) }}</strong> / 5</p>
+        {% else %}
+        <p>No ratings yet</p>
+        {% endif %}
+
+        <div class="card p-4 mt-3" style="background: rgba(255, 255, 255, 0.03);">
+            <h5>Rate This Company</h5>
+            <form method="POST" action="{{ url_for('rate_company', id=company.id) }}">
+                <div class="mb-3">
+                    <label class="form-label">Your Name</label>
+                    <input type="text" class="form-control" name="user_name" placeholder="Anonymous" value="Anonymous">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Rating (1-5)</label>
+                    <select class="form-select" name="rating" required>
+                        <option value="5">5 - Very Dangerous</option>
+                        <option value="4">4 - Dangerous</option>
+                        <option value="3">3 - Suspicious</option>
+                        <option value="2">2 - Questionable</option>
+                        <option value="1">1 - Minor Issues</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label class="form-label">Comment</label>
+                    <textarea class="form-control" name="comment" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit Rating</button>
+            </form>
+        </div>
+
+        <h5 class="mt-5">Recent Reviews</h5>
+        {% for rating in ratings %}
+        <div class="card p-3 mt-2" style="background: rgba(255, 255, 255, 0.02);">
+            <div class="d-flex justify-content-between">
+                <strong>{{ rating.user_name }}</strong>
+                <span class="badge bg-warning">{{ rating.rating }}/5</span>
+            </div>
+            <p class="mt-2 mb-0">{{ rating.comment }}</p>
+            <small style="color: rgba(255,255,255,0.5);">{{ rating.timestamp.strftime('%Y-%m-%d %H:%M') }}</small>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

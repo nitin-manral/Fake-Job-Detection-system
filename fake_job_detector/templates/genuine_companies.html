@@ -1,0 +1,277 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="text-center mb-5">
+        <h1 class="gradient-text mb-3"><i class="fas fa-shield-check"></i> Trusted Companies</h1>
+        <p class="subtitle-text">Verified genuine companies with safe hiring practices</p>
+    </div>
+    
+    <div class="row">
+        {% for company in companies %}
+        <div class="col-md-4 col-lg-3 mb-4">
+            <div class="trusted-card">
+                <div class="verified-badge">
+                    <i class="fas fa-check-circle"></i> Verified
+                </div>
+                
+                <div class="company-logo-container">
+                    <div class="company-logo-placeholder">
+                        <i class="fas fa-building"></i>
+                    </div>
+                </div>
+                
+                <h5 class="company-name">{{ company.name }}</h5>
+                
+                <div class="company-details">
+                    <div class="detail-item">
+                        <i class="fas fa-industry"></i>
+                        <span>{{ company.industry }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-calendar"></i>
+                        <span>Est. {{ company.founded_year }}</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span>{{ company.headquarters }}</span>
+                    </div>
+                </div>
+                
+                <a href="{{ url_for('genuine_company_detail', id=company.id) }}" class="view-details-btn">
+                    View Details <i class="fas fa-arrow-right"></i>
+                </a>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+.gradient-text {
+    background: linear-gradient(135deg, #6366f1, #8b5cf6, #ec4899);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.subtitle-text {
+    color: rgba(248, 250, 252, 0.9);
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0;
+}
+
+.trusted-card {
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(99, 102, 241, 0.3);
+    border-radius: 20px;
+    padding: 25px 20px;
+    text-align: center;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    animation: cardEntrance 0.5s ease backwards;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+@keyframes cardEntrance {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.trusted-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 20px;
+    padding: 2px;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.5), rgba(99, 102, 241, 0.5));
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+.trusted-card:hover {
+    transform: translateY(-12px);
+    border-color: rgba(16, 185, 129, 0.6);
+    box-shadow: 0 25px 60px rgba(16, 185, 129, 0.4), 0 0 50px rgba(16, 185, 129, 0.2);
+}
+
+.trusted-card:hover::before {
+    opacity: 1;
+}
+
+.verified-badge {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    background: rgba(16, 185, 129, 0.2);
+    color: #10b981;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid #10b981;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    z-index: 1;
+}
+
+.verified-badge i {
+    font-size: 0.85rem;
+}
+
+.company-logo-container {
+    width: 100px;
+    height: 100px;
+    margin: 20px auto 20px;
+    position: relative;
+}
+
+.company-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 10px;
+    transition: all 0.4s ease;
+}
+
+.trusted-card:hover .company-logo-img {
+    transform: scale(1.1) rotateY(360deg);
+}
+
+.company-logo-placeholder {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(135deg, #10b981, #059669);
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: white;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
+    transition: all 0.4s ease;
+}
+
+.trusted-card:hover .company-logo-placeholder {
+    transform: scale(1.1) rotateY(360deg);
+}
+
+.company-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 20px;
+    min-height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1.3;
+}
+
+.company-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex: 1;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: rgba(248, 250, 252, 0.8);
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 10px;
+    transition: all 0.3s ease;
+}
+
+.detail-item:hover {
+    background: rgba(99, 102, 241, 0.1);
+    transform: translateX(5px);
+}
+
+.detail-item i {
+    color: #10b981;
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.view-details-btn {
+    display: block;
+    background: linear-gradient(135deg, #10b981, #059669);
+    color: white !important;
+    padding: 12px 25px;
+    border-radius: 25px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    margin-top: auto;
+    cursor: pointer;
+    position: relative;
+    z-index: 10;
+}
+
+.view-details-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.5);
+    color: white !important;
+    text-decoration: none;
+}
+
+.view-details-btn i {
+    margin-left: 5px;
+    transition: all 0.3s ease;
+}
+
+.view-details-btn:hover i {
+    transform: translateX(5px);
+}
+
+.trusted-card:nth-child(1) { animation-delay: 0.05s; }
+.trusted-card:nth-child(2) { animation-delay: 0.1s; }
+.trusted-card:nth-child(3) { animation-delay: 0.15s; }
+.trusted-card:nth-child(4) { animation-delay: 0.2s; }
+.trusted-card:nth-child(5) { animation-delay: 0.25s; }
+.trusted-card:nth-child(6) { animation-delay: 0.3s; }
+.trusted-card:nth-child(7) { animation-delay: 0.35s; }
+.trusted-card:nth-child(8) { animation-delay: 0.4s; }
+.trusted-card:nth-child(9) { animation-delay: 0.45s; }
+.trusted-card:nth-child(10) { animation-delay: 0.5s; }
+.trusted-card:nth-child(11) { animation-delay: 0.55s; }
+.trusted-card:nth-child(12) { animation-delay: 0.6s; }
+
+@media (max-width: 768px) {
+    .company-name {
+        font-size: 1rem;
+        min-height: 40px;
+    }
+    
+    .detail-item {
+        font-size: 0.85rem;
+    }
+}
+</style>
+{% endblock %}

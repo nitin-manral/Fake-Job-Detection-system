@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Fake Company - Admin{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header">
+                    <h4><i class="fas fa-edit"></i> Edit Fake Company</h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Company Name</label>
+                            <input type="text" class="form-control" id="name" name="name" value="{{ company.name }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="scam_type" class="form-label">Scam Type</label>
+                            <input type="text" class="form-control" id="scam_type" name="scam_type" value="{{ company.scam_type }}" required>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="how_scam_works" class="form-label">How Scam Works</label>
+                            <textarea class="form-control" id="how_scam_works" name="how_scam_works" rows="4" required>{{ company.how_scam_works }}</textarea>
+                        </div>
+                        
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Update Company
+                            </button>
+                            <a href="{{ url_for('admin_fake_companies') }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Back to List
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
