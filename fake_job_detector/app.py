@@ -6,12 +6,9 @@ import whois
 import ssl
 import socket
 from urllib.parse import urlparse
-import pickle
 import os
 import csv
 import sys
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.linear_model import LogisticRegression
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 from reportlab.lib.units import inch
@@ -81,106 +78,52 @@ class Admin(db.Model):
     username = db.Column(db.String(100), unique=True)
     password = db.Column(db.String(100))
 
-class MLModel:
+class SimpleFakeDetector:
     def __init__(self):
-        self.vectorizer = TfidfVectorizer(max_features=500, stop_words='english')
-        self.model = LogisticRegression(random_state=42)
-        self.trained = False
-    
-    def train(self):
-        try:
-            fake_samples = [
-                "urgent hiring immediate joining work from home earn money fast no experience required",
-                "pay registration fee deposit money advance payment processing fee refundable",
-                "guaranteed income easy money quick cash part time full time flexible",
-                "contact whatsapp telegram personal email gmail yahoo hotmail",
-                "no interview required instant selection immediate offer letter joining",
-                "earn lakhs per month unlimited income passive income guaranteed salary",
-                "investment required security deposit refundable amount advance fee",
-                "data entry copy paste simple typing job easy work",
-                "limited seats hurry up last date today only apply now",
-                "send resume to gmail id personal contact number whatsapp",
-                "work from home part time earn money online no investment",
-                "registration fee processing charges document verification fee payment",
-                "guaranteed job placement immediate joining urgent requirement freshers",
-                "no experience needed training provided earn while you learn",
-                "unlimited earning potential passive income side hustle extra income",
-                "contact hr manager personal email gmail yahoo rediffmail",
-                "instant approval no questions asked easy application process",
-                "earn thousands daily weekly monthly payment guaranteed income",
-                "simple data entry typing copy paste work from anywhere",
-                "limited time offer hurry last few seats available today",
-                "send cv resume to personal gmail contact whatsapp number",
-                "advance payment security deposit registration charges refundable fee",
-                "no interview direct selection offer letter immediate joining bonus",
-                "work from home flexible timing part time full time students",
-                "easy money quick cash earn lakhs guaranteed high salary"
-            ]
-            genuine_samples = [
-                "bachelor degree required minimum experience years technical skills programming",
-                "apply through official website career portal company email domain",
-                "interview process multiple rounds technical assessment hr round",
-                "competitive salary benefits health insurance provident fund gratuity",
-                "job description responsibilities qualifications required skills experience",
-                "company overview established organization industry leader reputation",
-                "professional development training opportunities career growth advancement",
-                "office location work schedule full time employment permanent position",
-                "equal opportunity employer diversity inclusion workplace culture",
-                "official recruitment no fees charged transparent process legitimate",
-                "minimum qualification degree experience required technical skills",
-                "apply official career portal company website recruitment page",
-                "selection process aptitude test technical interview hr discussion",
-                "salary package benefits medical insurance pf esi leave policy",
-                "job responsibilities duties qualifications eligibility criteria requirements",
-                "established company reputed organization industry experience track record",
-                "training program skill development career progression growth opportunities",
-                "work location office address reporting time full time permanent",
-                "equal employment opportunity merit based selection fair process",
-                "legitimate recruitment official process no payment required free",
-                "educational qualification work experience technical expertise required",
-                "company career page official recruitment portal application process",
-                "interview rounds assessment tests evaluation criteria selection procedure",
-                "compensation package employee benefits insurance retirement plans",
-                "role description key responsibilities required qualifications skills"
-            ]
-            
-            X = fake_samples + genuine_samples
-            y = [1] * len(fake_samples) + [0] * len(genuine_samples)
-            
-            X_vec = self.vectorizer.fit_transform(X)
-            self.model.fit(X_vec, y)
-            self.trained = True
-            return True
-        except Exception as e:
-            print(f"ML Model training error: {str(e)}")
-            self.trained = False
-            return False
+        self.fake_keywords = [
+            'urgent', 'immediate', 'guaranteed', 'easy money', 'work from home',
+            'no experience', 'registration fee', 'deposit', 'advance payment',
+            'whatsapp', 'telegram', 'gmail', 'yahoo', 'personal email',
+            'unlimited income', 'earn lakhs', 'quick cash', 'investment required',
+            'limited seats', 'hurry up', 'last date today', 'no interview',
+            'pay registration', 'security deposit', 'refundable amount',
+            'data entry', 'copy paste', 'simple typing', 'earn thousands',
+            'guaranteed job', 'instant selection', 'no questions asked'
+        ]
     
     def predict(self, text):
         try:
-            if not self.trained:
-                if not self.train():
-                    return "Unknown", 0.0
-            
             if not text or not text.strip():
                 return "Unknown", 0.0
+            
+            text_lower = text.lower()
+            fake_score = 0
+            
+            # Count fake keywords
+            for keyword in self.fake_keywords:
+                if keyword in text_lower:
+                    fake_score += 1
+            
+            # Calculate confidence based on keyword density
+            total_words = len(text.split())
+            if total_words == 0:
+                return "Unknown", 0.0
+            
+            fake_ratio = fake_score / max(total_words / 10, 1)  # Normalize by text length
+            confidence = min(fake_ratio * 100, 95)  # Cap at 95%
+            
+            if fake_score >= 3:
+                return "Fake", confidence
+            elif fake_score >= 1:
+                return "Suspicious", confidence * 0.7
+            else:
+                return "Genuine", max(100 - confidence, 60)
                 
-            # Clean and preprocess text
-            text = str(text).strip()
-            
-            X_vec = self.vectorizer.transform([text])
-            prediction = self.model.predict(X_vec)[0]
-            probability = self.model.predict_proba(X_vec)[0]
-            
-            prediction_label = "Fake" if prediction == 1 else "Genuine"
-            confidence = max(probability) * 100
-            
-            return prediction_label, confidence
         except Exception as e:
-            print(f"ML Model prediction error: {str(e)}")
+            print(f"Prediction error: {str(e)}")
             return "Unknown", 0.0
 
-ml_model = MLModel()
+ml_model = SimpleFakeDetector()
 
 def check_suspicious_keywords(text):
     suspicious_words = [
